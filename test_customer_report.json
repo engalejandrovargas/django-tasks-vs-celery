@@ -1,6 +1,0 @@
-{
-  "task_type": "django",
-  "task_name": "generate_customer_report",
-  "customer_id": "eccd7e76-f5b3-4c05-9440-5dfbe991022b",
-  "days": 30
-}

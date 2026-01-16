@@ -1,5 +1,0 @@
-{
-  "task_type": "celery",
-  "task_name": "process_readings_batch",
-  "reading_ids": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
-}
