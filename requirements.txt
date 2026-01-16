@@ -1,0 +1,40 @@
+# Core Framework
+Django==6.0  # Latest with native Tasks framework
+djangorestframework==3.16  # REST API development
+
+# Database
+psycopg2-binary==2.9.10  # PostgreSQL adapter (binary for easier install)
+
+# Task Processing - Celery
+celery==5.6.2  # Distributed task queue
+redis==5.2.1  # Redis client for Celery broker
+flower==2.0.1  # Celery monitoring tool
+
+# API Documentation
+drf-spectacular==0.28.0  # OpenAPI 3 schema generation for DRF
+
+# Development & Testing
+django-extensions==3.2.3  # Shell_plus and other dev utilities
+ipython==8.31.0  # Better Python shell
+Faker==33.1.0  # Generate fake data for testing
+
+# Data Processing
+pandas==2.2.3  # Data manipulation (for CSV processing)
+python-dateutil==2.9.0  # Date utilities
+
+# Monitoring & Metrics
+prometheus-client==0.21.1  # Metrics collection (optional)
+
+# Code Quality (Optional - for development)
+black==24.10.0  # Code formatter
+flake8==7.1.1  # Linting
+isort==5.13.2  # Import sorting
+
+# Environment Management
+python-dotenv==1.0.1  # Load environment variables from .env
+
+# CORS (if needed for frontend)
+django-cors-headers==4.6.0  # Handle CORS
+
+# Timezone Support
+pytz==2024.2  # Timezone definitions
