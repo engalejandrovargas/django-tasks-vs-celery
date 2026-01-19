@@ -25,7 +25,8 @@ This project processes simulated smart meter readings asynchronously and provide
 - Django REST Framework
 - PostgreSQL 14+
 - Redis 7+ / Memurai (Windows) - for Celery
-- Celery 5.4.0
+- Celery 5.6.2
+- Flower 2.0.1 (Celery monitoring dashboard)
 
 ## Project Structure
 
@@ -90,11 +91,19 @@ python manage.py db_worker --reload
 celery -A config worker -l info --pool=solo  # --pool=solo for Windows
 ```
 
+**Terminal 4 - Flower (Celery Monitoring Dashboard):**
+```bash
+celery -A config flower --port=5555
+# Or with basic auth:
+celery -A config flower --port=5555 --basic-auth=admin:password
+```
+
 ### Access Points
 
 | Service | URL |
 |---------|-----|
-| Dashboard | http://localhost:8001/api/comparison/dashboard/ |
+| Comparison Dashboard | http://localhost:8001/api/comparison/dashboard/ |
+| Flower (Celery Monitor) | http://localhost:5555/ |
 | API Docs (Swagger) | http://localhost:8001/api/docs/ |
 | API Docs (ReDoc) | http://localhost:8001/api/redoc/ |
 
@@ -150,6 +159,7 @@ Both systems now run tasks **asynchronously** in separate worker processes:
 | **Broker** | PostgreSQL (existing DB) | Redis |
 | **Task Storage** | Database table | Redis |
 | **Worker Command** | `python manage.py db_worker` | `celery -A config worker` |
+| **Monitoring** | Django Admin / DB queries | Flower dashboard |
 | **Extra Infrastructure** | None (uses existing DB) | Requires Redis |
 | **Retry Support** | Manual | Built-in with `max_retries` |
 
