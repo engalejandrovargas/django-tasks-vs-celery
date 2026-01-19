@@ -1,29 +1,31 @@
 # Smart Meter Data Processor
 
-A Django 6.0 application comparing native Django Tasks framework with Celery for asynchronous processing of smart meter readings.
+A Django application comparing **django-tasks** (async DatabaseBackend) with **Celery** for asynchronous processing of smart meter readings.
 
 ## Overview
 
-This project processes simulated smart meter readings asynchronously and provides a side-by-side comparison of Django 6.0's new Tasks framework versus Celery.
+This project processes simulated smart meter readings asynchronously and provides a side-by-side comparison of Django's Tasks framework (via `django-tasks` package with DatabaseBackend) versus Celery.
 
 ### Features
 
-- **Django 6.0 Tasks**: Native background task framework
+- **Django Tasks (Async)**: True async execution with `django-tasks` DatabaseBackend
 - **Celery Integration**: Distributed task processing with Redis broker
+- **Fair Comparison**: Both systems run tasks in separate worker processes
 - **Interactive Dashboard**: Chart.js visualization comparing performance metrics
 - **REST API**: Django REST Framework with Swagger documentation
-- **Performance Metrics**: Real-time comparison (Django ~20% faster)
+- **Performance Metrics**: Real-time comparison of execution times
 - **Japanese Localization**: Customer data formatted for Japanese market
 - **PostgreSQL**: Optimized database with 35K+ readings
 
 ## Technology Stack
 
 - Python 3.12+
-- Django 6.0 (with native Tasks framework)
-- Django REST Framework 3.16
+- Django 5.2+
+- django-tasks 0.11.0 (DatabaseBackend for async execution)
+- Django REST Framework
 - PostgreSQL 14+
-- Redis 7+ / Memurai (Windows)
-- Celery 5.6.2
+- Redis 7+ / Memurai (Windows) - for Celery
+- Celery 5.4.0
 
 ## Project Structure
 
@@ -76,7 +78,14 @@ python manage.py createsuperuser
 python manage.py runserver 8001
 ```
 
-**Terminal 2 - Celery Worker:**
+**Terminal 2 - Django Tasks Worker (db_worker):**
+```bash
+python manage.py db_worker
+# For development with auto-reload:
+python manage.py db_worker --reload
+```
+
+**Terminal 3 - Celery Worker (requires Redis):**
 ```bash
 celery -A config worker -l info --pool=solo  # --pool=solo for Windows
 ```
@@ -131,31 +140,34 @@ curl http://localhost:8001/api/comparison/metrics/
 curl http://localhost:8001/api/comparison/summary/
 ```
 
-## Performance Comparison
+## Architecture Comparison
 
-The dashboard provides real-time comparison between Django Tasks and Celery:
+Both systems now run tasks **asynchronously** in separate worker processes:
 
-| Metric | Django 6.0 Tasks | Celery |
-|--------|------------------|--------|
-| Avg Duration | ~0.04s | ~0.05s |
-| Throughput | ~230 rec/s | ~180 rec/s |
-| Success Rate | 100% | 100% |
-
-**Result**: Django Tasks is faster for simple synchronous-style tasks.
+| Aspect | Django Tasks (DatabaseBackend) | Celery |
+|--------|-------------------------------|--------|
+| **Execution** | Async (db_worker process) | Async (celery worker) |
+| **Broker** | PostgreSQL (existing DB) | Redis |
+| **Task Storage** | Database table | Redis |
+| **Worker Command** | `python manage.py db_worker` | `celery -A config worker` |
+| **Extra Infrastructure** | None (uses existing DB) | Requires Redis |
+| **Retry Support** | Manual | Built-in with `max_retries` |
 
 ### When to Use Each
 
-**Django Tasks**:
+**Django Tasks (django-tasks)**:
 - Simple background jobs
 - Django-centric workflows
-- Development/prototyping
+- No additional infrastructure needed
 - Lower operational overhead
+- Atomic task enqueuing within DB transactions
 
 **Celery**:
-- Complex workflows (chains, groups)
-- Distributed systems
-- Advanced scheduling
-- Production-scale async processing
+- Complex workflows (chains, groups, chords)
+- Distributed systems across multiple servers
+- Advanced scheduling (beat)
+- Production-scale with many workers
+- Built-in retry mechanisms
 
 ## License
 

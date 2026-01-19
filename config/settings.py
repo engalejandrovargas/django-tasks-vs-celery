@@ -54,6 +54,10 @@ INSTALLED_APPS = [
     'django_extensions',
     'corsheaders',
 
+    # Django Tasks (async database backend)
+    'django_tasks',
+    'django_tasks.backends.database',
+
     # Project apps
     'meters',
     'comparison',
@@ -152,15 +156,21 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 
 # ============================================================================
-# DJANGO 6.0 TASKS CONFIGURATION
+# DJANGO TASKS CONFIGURATION (Async Database Backend)
 # ============================================================================
+# Using django-tasks DatabaseBackend for true async task execution.
+# Tasks are stored in the database and executed by a separate worker process.
+#
+# To run the worker: python manage.py db_worker
+# For development with auto-reload: python manage.py db_worker --reload
 
 TASKS = {
     'default': {
         'BACKEND': os.getenv(
             'DJANGO_TASKS_BACKEND',
-            'django.tasks.backends.immediate.ImmediateBackend'
+            'django_tasks.backends.database.DatabaseBackend'
         ),
+        'QUEUES': ['default'],  # Validate queue names
     }
 }
 

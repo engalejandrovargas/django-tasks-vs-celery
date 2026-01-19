@@ -221,13 +221,14 @@ def generate_report(request):
         return Response({'success': False, 'error': 'Customer not found'}, status=404)
 
     if report_type == 'django':
-        # Django task - use .enqueue() to execute immediately with ImmediateBackend
+        # Django task - use .enqueue() to queue for async execution by db_worker
+        # With DatabaseBackend, tasks are stored in DB and processed by worker
         task_result = generate_customer_report_django.enqueue(customer_id)
         result = {
-            'success': task_result.status == 'SUCCESSFUL',
-            'task_id': task_result.id,
-            'status': task_result.status,
-            'return_value': task_result.return_value if hasattr(task_result, 'return_value') else None
+            'success': True,
+            'task_id': str(task_result.id) if hasattr(task_result, 'id') else None,
+            'status': 'queued',
+            'note': 'Task will be processed by db_worker (python manage.py db_worker)'
         }
     elif report_type == 'celery':
         # Celery task - use .delay() to queue asynchronously

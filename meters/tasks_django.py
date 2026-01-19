@@ -1,14 +1,17 @@
 """
-Django 6.0 Tasks implementation for smart meter processing.
+Django Tasks implementation for smart meter processing.
 
-This module contains background tasks using Django's native Tasks framework.
+This module contains background tasks using django-tasks with DatabaseBackend
+for true async execution. Tasks are stored in the database and executed by
+a separate worker process (python manage.py db_worker).
+
 These tasks are compared against Celery implementations.
 """
 
 import time
 from datetime import datetime, timedelta
 from decimal import Decimal
-from django.tasks import task
+from django_tasks import task  # Using django-tasks package for DatabaseBackend
 from django.db.models import Sum, Avg, Max, Min, Count
 from django.utils import timezone
 from meters.models import MeterReading, UsageAggregate, SmartMeter, Customer

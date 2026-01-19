@@ -1,40 +1,71 @@
-# Core Framework
-Django==6.0  # Latest with native Tasks framework
-djangorestframework==3.16  # REST API development
-
-# Database
-psycopg2-binary==2.9.10  # PostgreSQL adapter (binary for easier install)
-
-# Task Processing - Celery
-celery==5.6.2  # Distributed task queue
-redis==5.2.1  # Redis client for Celery broker
-flower==2.0.1  # Celery monitoring tool
-
-# API Documentation
-drf-spectacular==0.28.0  # OpenAPI 3 schema generation for DRF
-
-# Development & Testing
-django-extensions==3.2.3  # Shell_plus and other dev utilities
-ipython==8.31.0  # Better Python shell
-Faker==33.1.0  # Generate fake data for testing
-
-# Data Processing
-pandas==2.2.3  # Data manipulation (for CSV processing)
-python-dateutil==2.9.0  # Date utilities
-
-# Monitoring & Metrics
-prometheus-client==0.21.1  # Metrics collection (optional)
-
-# Code Quality (Optional - for development)
-black==24.10.0  # Code formatter
-flake8==7.1.1  # Linting
-isort==5.13.2  # Import sorting
-
-# Environment Management
-python-dotenv==1.0.1  # Load environment variables from .env
-
-# CORS (if needed for frontend)
-django-cors-headers==4.6.0  # Handle CORS
-
-# Timezone Support
-pytz==2024.2  # Timezone definitions
+amqp==5.3.1
+asgiref==3.11.0
+asttokens==3.0.1
+attrs==25.4.0
+billiard==4.2.4
+black==24.10.0
+celery==5.6.2
+certifi==2026.1.4
+charset-normalizer==3.4.4
+click==8.3.1
+click-didyoumean==0.3.1
+click-plugins==1.1.1.2
+click-repl==0.3.0
+colorama==0.4.6
+decorator==5.2.1
+Django==6.0
+django-cors-headers==4.6.0
+django-extensions==3.2.3
+django-stubs-ext==5.2.8
+django-tasks==0.11.0
+djangorestframework==3.16.0
+drf-spectacular==0.28.0
+executing==2.2.1
+Faker==33.1.0
+flake8==7.1.1
+flower==2.0.1
+humanize==4.15.0
+idna==3.11
+inflection==0.5.1
+ipython==8.31.0
+isort==5.13.2
+jedi==0.19.2
+jsonschema==4.26.0
+jsonschema-specifications==2025.9.1
+kombu==5.6.2
+matplotlib-inline==0.2.1
+mccabe==0.7.0
+mypy_extensions==1.1.0
+numpy==2.4.1
+packaging==25.0
+pandas==2.2.3
+parso==0.8.5
+pathspec==1.0.3
+platformdirs==4.5.1
+prometheus_client==0.21.1
+prompt_toolkit==3.0.52
+psycopg2-binary==2.9.10
+pure_eval==0.2.3
+pycodestyle==2.12.1
+pyflakes==3.2.0
+Pygments==2.19.2
+python-dateutil==2.9.0
+python-dotenv==1.0.1
+pytz==2024.2
+PyYAML==6.0.3
+redis==5.2.1
+referencing==0.37.0
+requests==2.32.5
+rpds-py==0.30.0
+six==1.17.0
+sqlparse==0.5.5
+stack-data==0.6.3
+tornado==6.5.4
+traitlets==5.14.3
+typing_extensions==4.15.0
+tzdata==2025.3
+tzlocal==5.3.1
+uritemplate==4.2.0
+urllib3==2.6.3
+vine==5.1.0
+wcwidth==0.2.14

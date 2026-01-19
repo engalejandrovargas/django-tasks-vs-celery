@@ -202,7 +202,12 @@ def trigger_task(request):
 
 
 def _trigger_django_task(task_name, data):
-    """Trigger a Django 6.0 Task."""
+    """
+    Trigger a Django Task using django-tasks DatabaseBackend.
+
+    Tasks are stored in the database and executed asynchronously by db_worker.
+    Run the worker with: python manage.py db_worker
+    """
     if task_name == 'process_readings_batch':
         result = process_readings_batch_django.enqueue(
             reading_ids=data['reading_ids']
@@ -211,8 +216,8 @@ def _trigger_django_task(task_name, data):
             'task_type': 'django',
             'task_name': task_name,
             'task_id': str(result.id) if hasattr(result, 'id') else None,
-            'status': 'Task enqueued (ImmediateBackend executes synchronously)',
-            'result': result._return_value if hasattr(result, '_return_value') else None
+            'status': 'queued',
+            'note': 'Task will be processed by db_worker'
         }
 
     elif task_name == 'calculate_daily_aggregate':
@@ -224,8 +229,8 @@ def _trigger_django_task(task_name, data):
             'task_type': 'django',
             'task_name': task_name,
             'task_id': str(result.id) if hasattr(result, 'id') else None,
-            'status': 'Task enqueued',
-            'result': result._return_value if hasattr(result, '_return_value') else None
+            'status': 'queued',
+            'note': 'Task will be processed by db_worker'
         }
 
     elif task_name == 'bulk_process_readings':
@@ -236,8 +241,8 @@ def _trigger_django_task(task_name, data):
             'task_type': 'django',
             'task_name': task_name,
             'task_id': str(result.id) if hasattr(result, 'id') else None,
-            'status': 'Task enqueued',
-            'result': result._return_value if hasattr(result, '_return_value') else None
+            'status': 'queued',
+            'note': 'Task will be processed by db_worker'
         }
 
     elif task_name == 'generate_customer_report':
@@ -249,8 +254,8 @@ def _trigger_django_task(task_name, data):
             'task_type': 'django',
             'task_name': task_name,
             'task_id': str(result.id) if hasattr(result, 'id') else None,
-            'status': 'Task enqueued (ImmediateBackend executes synchronously)',
-            'result': result._return_value if hasattr(result, '_return_value') else None
+            'status': 'queued',
+            'note': 'Task will be processed by db_worker'
         }
 
 
