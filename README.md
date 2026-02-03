@@ -74,28 +74,89 @@ python manage.py createsuperuser
 
 ### Running the Application
 
+#### Step 1: Start Required Services
+
+Before running the application, ensure these services are running:
+
+**PostgreSQL** (required for both Django Tasks and the application):
+- Windows: Start via Services (`services.msc`) or pgAdmin
+- Linux/Mac: `sudo service postgresql start` or `brew services start postgresql`
+
+**Redis/Memurai** (required for Celery only):
+
+Windows (Memurai):
+```powershell
+# Check if Memurai is installed
+Get-Service Memurai
+
+# Start Memurai (run PowerShell as Administrator)
+Start-Service Memurai
+
+# Or run directly if service won't start
+& "C:\Program Files\Memurai\memurai.exe"
+```
+
+Linux/Mac (Redis):
+```bash
+# Start Redis
+redis-server
+# Or as a service
+sudo service redis-server start
+```
+
+Verify services are running:
+```powershell
+# Check PostgreSQL (port 5432)
+Test-NetConnection -ComputerName localhost -Port 5432
+
+# Check Redis/Memurai (port 6379)
+Test-NetConnection -ComputerName localhost -Port 6379
+```
+
+#### Step 2: Start the Application (4 Terminals)
+
 **Terminal 1 - Django Server:**
 ```bash
 python manage.py runserver 8001
 ```
 
-**Terminal 2 - Django Tasks Worker (db_worker):**
+**Terminal 2 - Django Tasks Worker:**
 ```bash
 python manage.py db_worker
 # For development with auto-reload:
 python manage.py db_worker --reload
 ```
 
-**Terminal 3 - Celery Worker (requires Redis):**
+**Terminal 3 - Celery Worker:**
 ```bash
 celery -A config worker -l info --pool=solo  # --pool=solo for Windows
 ```
 
-**Terminal 4 - Flower (Celery Monitoring Dashboard):**
+**Terminal 4 - Flower (Celery Monitoring):**
 ```bash
 celery -A config flower --port=5555
 # Or with basic auth:
 celery -A config flower --port=5555 --basic-auth=admin:password
+```
+
+#### Quick Start (Windows PowerShell)
+
+Run all services in separate PowerShell windows:
+```powershell
+# Terminal 1: Start Memurai (if not running as service)
+& "C:\Program Files\Memurai\memurai.exe"
+
+# Terminal 2: Django Server
+.\myenv\Scripts\activate; python manage.py runserver 8001
+
+# Terminal 3: Django Tasks Worker
+.\myenv\Scripts\activate; python manage.py db_worker
+
+# Terminal 4: Celery Worker
+.\myenv\Scripts\activate; celery -A config worker -l info --pool=solo
+
+# Terminal 5: Flower (optional)
+.\myenv\Scripts\activate; celery -A config flower --port=5555
 ```
 
 ### Access Points
