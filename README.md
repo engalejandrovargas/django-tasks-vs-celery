@@ -20,7 +20,7 @@ This project processes simulated smart meter readings asynchronously and provide
 ## Technology Stack
 
 - Python 3.12+
-- Django 5.2+
+- Django 6
 - django-tasks 0.11.0 (DatabaseBackend for async execution)
 - Django REST Framework
 - PostgreSQL 14+
