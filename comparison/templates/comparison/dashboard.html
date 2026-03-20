@@ -804,6 +804,8 @@
 	let djangoChart = null;
 	let celeryChart = null;
 	const JPY_RATE = 190; // £1 = ¥190 (approximate)
+	let lastDjangoCount = -1;
+	let lastCeleryCount = -1;
 
 	// Fetch customers
 	async function fetchCustomers() {
@@ -887,7 +889,12 @@
 
 			const result = await response.json();
 			console.log('Generated report:', result);
-			setTimeout(loadReports, 1000);
+			// Poll aggressively for 15s after enqueuing to catch the result
+			let polls = 0;
+			const poll = setInterval(async () => {
+				await loadReports();
+				if (++polls >= 5) clearInterval(poll);
+			}, 3000);
 		} catch (error) {
 			console.error('Error:', error);
 		}
@@ -972,6 +979,14 @@
 
 			const djangoReports = await djangoResponse.json();
 			const celeryReports = await celeryResponse.json();
+
+			const djangoChanged = djangoReports.length !== lastDjangoCount;
+			const celeryChanged = celeryReports.length !== lastCeleryCount;
+
+			if (!djangoChanged && !celeryChanged) return;
+
+			lastDjangoCount = djangoReports.length;
+			lastCeleryCount = celeryReports.length;
 
 			updateStats(djangoReports, celeryReports);
 			updateChart(djangoReports, celeryReports);
@@ -1345,6 +1360,9 @@
 	async function init() {
 		await fetchCustomers();
 		await loadReports();
+
+		// Auto-refresh every 5 seconds
+		setInterval(loadReports, 5000);
 
 		// Setup modal click-outside-to-close
 		const modal = document.getElementById('reportModal');

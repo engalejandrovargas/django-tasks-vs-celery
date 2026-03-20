@@ -339,8 +339,19 @@ def generate_customer_report_django(customer_id, days=30):
 
         total_readings = readings.count()
 
+        # Fall back to the most recent `days` worth of data if nothing in range
         if total_readings == 0:
-            raise ValueError(f"No readings found for customer {customer_id} in last {days} days")
+            latest = MeterReading.objects.filter(meter=meter).order_by('-timestamp').first()
+            if not latest:
+                raise ValueError(f"No readings found for customer {customer_id}")
+            end_date = latest.timestamp
+            start_date = end_date - timedelta(days=days)
+            readings = MeterReading.objects.filter(
+                meter=meter,
+                timestamp__gte=start_date,
+                timestamp__lte=end_date
+            ).order_by('timestamp')
+            total_readings = readings.count()
 
         # Calculate usage statistics
         total_kwh = Decimal('0')
