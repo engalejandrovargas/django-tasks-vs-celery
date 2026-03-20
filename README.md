@@ -31,12 +31,14 @@ This project processes simulated smart meter readings asynchronously and provide
 ## Project Structure
 
 ```
-Octopus/
+DjangoWorkers/
 ├── config/                 # Django project configuration
 ├── meters/                 # Core application (models, tasks, API)
 ├── comparison/             # Performance comparison dashboard
 ├── utils/                  # Utilities (data generator)
 ├── requirements.txt        # Python dependencies
+├── start.sh                # Starts all services in separate terminal windows
+├── stop.sh                 # Stops all running services
 └── README.md
 ```
 
@@ -86,9 +88,6 @@ Before running the application, ensure these services are running:
 
 Windows (Memurai):
 ```powershell
-# Check if Memurai is installed
-Get-Service Memurai
-
 # Start Memurai (run PowerShell as Administrator)
 Start-Service Memurai
 
@@ -98,22 +97,33 @@ Start-Service Memurai
 
 Linux/Mac (Redis):
 ```bash
-# Start Redis
 redis-server
-# Or as a service
-sudo service redis-server start
 ```
 
-Verify services are running:
-```powershell
-# Check PostgreSQL (port 5432)
-Test-NetConnection -ComputerName localhost -Port 5432
+#### Step 2: Start the Application
 
-# Check Redis/Memurai (port 6379)
-Test-NetConnection -ComputerName localhost -Port 6379
+The project includes scripts that handle everything automatically:
+
+```bash
+# Start all services
+./start.sh
+
+# Stop all services
+./stop.sh
 ```
 
-#### Step 2: Start the Application (4 Terminals)
+`start.sh` will:
+- Verify the virtual environment exists
+- Auto-install dependencies if missing
+- Check PostgreSQL and Redis connectivity before starting
+- Open each service in its own terminal window (Django server, Django Tasks worker, Celery worker, Flower)
+- Clean up any stale processes from previous runs
+
+> **Note:** If Redis/Memurai is not running, `start.sh` will still start Django and the Django Tasks worker — only Celery and Flower will be skipped.
+
+#### Manual Start (alternative)
+
+If you prefer to start services individually:
 
 **Terminal 1 - Django Server:**
 ```bash
@@ -123,40 +133,16 @@ python manage.py runserver 8001
 **Terminal 2 - Django Tasks Worker:**
 ```bash
 python manage.py db_worker
-# For development with auto-reload:
-python manage.py db_worker --reload
 ```
 
 **Terminal 3 - Celery Worker:**
 ```bash
-celery -A config worker -l info --pool=solo  # --pool=solo for Windows
+celery -A config worker -l info --pool=solo
 ```
 
 **Terminal 4 - Flower (Celery Monitoring):**
 ```bash
 celery -A config flower --port=5555
-# Or with basic auth:
-celery -A config flower --port=5555 --basic-auth=admin:password
-```
-
-#### Quick Start (Windows PowerShell)
-
-Run all services in separate PowerShell windows:
-```powershell
-# Terminal 1: Start Memurai (if not running as service)
-& "C:\Program Files\Memurai\memurai.exe"
-
-# Terminal 2: Django Server
-.\myenv\Scripts\activate; python manage.py runserver 8001
-
-# Terminal 3: Django Tasks Worker
-.\myenv\Scripts\activate; python manage.py db_worker
-
-# Terminal 4: Celery Worker
-.\myenv\Scripts\activate; celery -A config worker -l info --pool=solo
-
-# Terminal 5: Flower (optional)
-.\myenv\Scripts\activate; celery -A config flower --port=5555
 ```
 
 ### Access Points
