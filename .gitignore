@@ -31,3 +31,6 @@ Thumbs.db
 # Project specific
 *.pyc
 .env
+dump.rdb
+logs/
+.service_pids/
